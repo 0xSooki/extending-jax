@@ -1,4 +1,4 @@
-# JAX Custom Operations with C++ and CUDA
+# JAX Custom Operations with Pybind11, C++ and CUDA
 
 A demonstration project showing how to extend JAX with custom C++ and CUDA operations using the XLA FFI (Foreign Function Interface). This project implements a simple mathematical operation `foo(a, b) = sum(a * (b + 1))` with both CPU and GPU kernels, complete with gradient support.
 
