@@ -176,6 +176,14 @@ print("GPU support:", hasattr(sooki, 'gpu_ops'))
 
 This project demonstrates JAX extension techniques and is provided for educational purposes.
 
+## Acknowledgments
+
+This project was inspired by and builds upon the excellent tutorial and examples from:
+
+**[dfm/extending-jax](https://github.com/dfm/extending-jax)** - A comprehensive guide to extending JAX with custom operations
+
+The original repository by Dan Foreman-Mackey provides foundational examples and best practices for JAX extensions that were instrumental in developing this project.
+
 ## References
 
 - [JAX Custom Operations Guide](https://jax.readthedocs.io/en/latest/Custom_Operation_for_GPUs.html)
