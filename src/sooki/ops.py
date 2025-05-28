@@ -4,8 +4,7 @@ import jax
 import jax.numpy as jnp
 import sooki
 
-# Note: Using float32 to match FFI expectations
-# jax.config.update("jax_enable_x64", True)
+jax.config.update("jax_enable_x64", True)
 
 gpu = False
 gpu_targets = {}
@@ -28,33 +27,42 @@ for name, target in sooki.registrations().items():
 def foo_fwd(a, b):
     assert a.shape == b.shape
     assert a.dtype == b.dtype
+
+    if a.size == 0:
+        return jnp.array(0.0, dtype=a.dtype), (a, b)
+    
     n = np.prod(a.shape).astype(np.int64)
-    scalar_type = jax.ShapeDtypeStruct((), a.dtype)  # scalar output
-    intermediate_type = jax.ShapeDtypeStruct(a.shape, a.dtype)  # b_plus_1 shape
+    scalar_type = jax.ShapeDtypeStruct((), a.dtype)
+    intermediate_type = jax.ShapeDtypeStruct(a.shape, a.dtype)
 
-    # Use GPU if available, otherwise use CPU
-    ffi_name = "foo_fwd" if gpu else "foo_fwd_cpu"
+    def impl(target_name):
+        return lambda: jax.ffi.ffi_call(
+            target_name, (scalar_type, intermediate_type), vmap_method="sequential"
+        )(a, b, n=n)
 
-    result, b_plus_1 = jax.ffi.ffi_call(
-        ffi_name, (scalar_type, intermediate_type), vmap_method="sequential"
-    )(a, b, n=n)
+    result, b_plus_1 = jax.lax.platform_dependent(
+        cpu=impl("foo_fwd_cpu"), cuda=impl("foo_fwd")
+    )
     return result, (a, b_plus_1)
 
 
 def foo_bwd(res, c_grad):
     a, b_plus_1 = res
+
+    if a.size == 0:
+        return jnp.zeros_like(a), jnp.zeros_like(a)
+
     assert c_grad.dtype == a.dtype
     assert a.dtype == b_plus_1.dtype
     n = np.prod(a.shape).astype(np.int64)
     out_type = jax.ShapeDtypeStruct(a.shape, a.dtype)
 
-    # Use GPU if available, otherwise use CPU
-    ffi_name = "foo_bwd" if gpu else "foo_bwd_cpu"
+    def impl(target_name):
+        return lambda: jax.ffi.ffi_call(
+            target_name, (out_type, out_type), vmap_method="sequential"
+        )(c_grad, a, b_plus_1, n=n)
 
-    # c_grad is now a scalar, pass it directly to the FFI function
-    return jax.ffi.ffi_call(ffi_name, (out_type, out_type), vmap_method="sequential")(
-        c_grad, a, b_plus_1, n=n
-    )
+    return jax.lax.platform_dependent(cpu=impl("foo_bwd_cpu"), cuda=impl("foo_bwd"))
 
 
 @jax.custom_vjp

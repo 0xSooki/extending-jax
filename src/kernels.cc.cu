@@ -3,7 +3,7 @@
 
 namespace ffi = xla::ffi;
 __global__ void FooFwdKernel(const float *a, const float *b, float *result,
-                             float *b_plus_1, size_t n)
+                             float *b_plus_1, int64_t n)
 {
   size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
   const size_t grid_stride = blockDim.x * gridDim.x;
@@ -22,7 +22,7 @@ __global__ void FooFwdKernel(const float *a, const float *b, float *result,
 
 ffi::Error FooFwdHost(cudaStream_t stream, ffi::Buffer<ffi::F32> a,
                       ffi::Buffer<ffi::F32> b, ffi::ResultBuffer<ffi::F32> result,
-                      ffi::ResultBuffer<ffi::F32> b_plus_1, size_t n)
+                      ffi::ResultBuffer<ffi::F32> b_plus_1, int64_t n)
 {
   const int block_dim = 128;
   const int grid_dim = std::min(32, (int)((n + block_dim - 1) / block_dim));
@@ -47,7 +47,7 @@ __global__ void FooBwdKernel(const float *scalar_grad,
                              const float *b_plus_1,
                              float *a_grad,
                              float *b_grad,
-                             size_t n)
+                             int64_t n)
 {
   size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
   const size_t grid_stride = blockDim.x * gridDim.x;
@@ -67,7 +67,7 @@ ffi::Error FooBwdHost(cudaStream_t stream,
                       ffi::Buffer<ffi::F32> b_plus_1,
                       ffi::ResultBuffer<ffi::F32> a_grad,
                       ffi::ResultBuffer<ffi::F32> b_grad,
-                      size_t n)
+                      int64_t n)
 {
   const int block_dim = 128;
   const int grid_dim = std::min(32, (int)((n + block_dim - 1) / block_dim));

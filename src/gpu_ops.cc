@@ -12,7 +12,7 @@ XLA_FFI_DEFINE_HANDLER_SYMBOL(
         .Arg<ffi::Buffer<ffi::F32>>()             // b
         .Ret<ffi::Buffer<ffi::F32>>()             // result (scalar)
         .Ret<ffi::Buffer<ffi::F32>>()             // b_plus_1
-        .Attr<size_t>("n"),
+        .Attr<int64_t>("n"),
     {xla::ffi::Traits::kCmdBufferCompatible}); // cudaGraph enabled
 
 // Creates symbol FooBwd with C linkage that can be loaded using Python ctypes
@@ -25,7 +25,7 @@ XLA_FFI_DEFINE_HANDLER_SYMBOL(
         .Arg<ffi::Buffer<ffi::F32>>()             // b_plus_1
         .Ret<ffi::Buffer<ffi::F32>>()             // a_grad
         .Ret<ffi::Buffer<ffi::F32>>()             // b_grad
-        .Attr<size_t>("n"),
+        .Attr<int64_t>("n"),
     {xla::ffi::Traits::kCmdBufferCompatible}); // cudaGraph enabled
 
 template <typename T>

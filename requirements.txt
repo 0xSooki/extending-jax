@@ -1,3 +1,4 @@
 jax
 pybind11
 scikit-build-core
+pytest
