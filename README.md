@@ -2,6 +2,10 @@
 
 A demonstration project showing how to extend JAX with custom C++ and CUDA operations using the XLA FFI (Foreign Function Interface). This project implements a simple mathematical operation `foo(a, b) = sum(a * (b + 1))` with both CPU and GPU kernels, complete with gradient support.
 
+[![PyPI version](https://img.shields.io/pypi/v/permanentboost)](https://pypi.org/project/permanentboost/)  
+[![Build](https://github.com/0xSooki/permanent-boost/actions/workflows/tests.yml/badge.svg)](https://github.com/0xSooki/permanent-boost/actions)  
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 ## Features
 
 - ✅ **Custom JAX operations** with C++ and CUDA implementations
