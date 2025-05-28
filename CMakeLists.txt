@@ -17,7 +17,7 @@ else()
 endif()
 
 # Find Python, pybind11, and TBB
-find_package(Python 3.12 REQUIRED COMPONENTS Interpreter Development.Module)
+find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
